@@ -1,0 +1,53 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "node3" do |node3|
+    node3.vm.box = "ubuntu/jammy64"
+    node3.vm.network "private_network", ip: "192.168.168.111"
+    node3.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+    end
+    node3.vm.provision "shell", inline: <<-SHELL
+        echo "Aggiornamento del sistema"
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+
+        echo "Installazione NFS"
+        sudo apt install nfs-kernel-server
+
+        echo "condivido una directory"
+        sudo mkdir -p /mnt/nfs_share
+        sudo chmod 777 /mnt/nfs_share
+        sudo echo "/mnt/nfs_share 192.168.168.0/24(rw,sync,no_subtree_check)" >> /etc/exports
+        sudo exportfs -a
+        sudo systemctl restart nfs-kernel-server
+
+      SHELL
+    end
+  end
+  
+  
+  config.vm.define "node4" do |node4|
+    node4.vm.box = "ubuntu/jammy64"
+    node4.vm.network "private_network", ip: "192.168.168.112"
+    node4.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+    end
+    node4.vm.provision "shell", inline: <<-SHELL
+        echo "Aggiornamento del sistema"
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+
+        echo "Installazione NFS"
+        sudo apt install nfs-kernel-server
+
+        echo "monto la cartella condivisa nella mia macchina"
+        sudo mount -t nfs 192.168.168.111:/mnt/nfs_share /mnt/nfs_mount
+        
+        echo "container"
+        sudo apt install docker.io
+        sudo docker volume create --driver local --opt type=nfs --opt o=addr=192.168.168.111 ,rw --opt device=:/mnt/nfs_share my_nfs_volume
+        sudo docker run -v my_nfs_volume:/app/nfs_share my-container-image
+      SHELL
+    end
+  end
+end
