@@ -1,6 +1,7 @@
 # Condivisione di Storage NFS in Container tramite Volume Docker
 
 Questa configurazione consente a un container Docker in esecuzione su una **VM client** di accedere a uno **storage NFS persistente**, esposto da una **VM server**, utilizzando un **volume Docker** con driver `local`.
+Questo metodo è utile, ad esempio, se vogliamo utilizzare lo stesso volume in più Container 
 
 ### Installazione tramite Docker Compose
 

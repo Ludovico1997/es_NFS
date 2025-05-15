@@ -2,12 +2,10 @@
 
 In questo progetto rendiamo accessibile uno **storage NFS persistente**, ospitato su una **VM server**, a un **container in esecuzione su una VM client**.
 
-## Architettura
-
-
 ## Metodo: Bind Mount
 
-Utilizziamo il metodo del **Bind Mount**, che prevede i seguenti passaggi:
+Utilizziamo il metodo del **Bind Mount** che ci permette di visualizzare il contenuto di una directory remota nel nostro container solo ed esclusivamente se prima abbiamo messo in condivisione la cartella nelle nostre VM.
+Vado quindi a fare Prima il binding tra le VM e dopo tra VM e container.
 
 **Mount NFS nella VM client**:
    Montiamo manualmente o via `/etc/fstab` la directory NFS condivisa dal server.
