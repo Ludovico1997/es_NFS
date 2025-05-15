@@ -44,9 +44,8 @@ Vagrant.configure("2") do |config|
         sudo mount -t nfs 192.168.168.111:/mnt/nfs_share /mnt/nfs_mount
 
         echo "container"
+        sudo apt install docker.io
         docker run -v /mnt/nfs_mount:/app/nfs_share my-container-image
-        docker volume create --driver local --opt type=nfs --opt o=addr=192.168.168.111 ,rw --opt device=:/mnt/nfs_share my_nfs_volume
-        docker run -v my_nfs_volume:/app/nfs_share my-container-image
       SHELL
     end
   end
